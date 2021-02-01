@@ -76,7 +76,6 @@
 @stop
 
 @section('css')
-<link rel="stylesheet" href="/css/admin_custom.css">
 @stop
 
 @section('js')
@@ -231,19 +230,29 @@
                         '_method' : 'DELETE',
                         '_token' : csrf_token,
                     },
-                    success: function (response) {
+                    success: function (resp) {
                         $('#table-author').DataTable().ajax.reload();
-                        swal({
-                            icon: 'success',
-                            title: 'Success!',
-                            text: 'Data has been deleted!'
-                        });
+                        if(resp){
+                            swal({
+                                icon: 'warning',
+                                title: 'Warning!',
+                                text: resp.message
+                            });
+                        }else{
+                            swal({
+                                icon: 'success',
+                                title: 'Success!',
+                                text: 'Data has been deleted!'
+                            });
+                        }
                     },
                     error: function (xhr) {
+                        const res = xhr.responseJSON;
+                        console.log(res);
                         swal({
                             icon: 'warning',
                             title: 'Oops...',
-                            text: 'Something went wrong'
+                            text: 'Something went wrong because {{Session::get('message')}}'
                         });
                     }
                 })

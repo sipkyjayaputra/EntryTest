@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Author;
+use App\Models\Relation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Response;
 
 class AuthorController extends Controller
 {
@@ -61,7 +63,15 @@ class AuthorController extends Controller
     public function destroy($id)
     {
         $author = Author::findOrFail($id);
-        $author->delete();
+        $relation = Relation::where('author_id', $id)->get();
+        if($relation->isEmpty()){
+            $author->delete();
+        }else{
+            return response()->json([
+                'code'      =>  0,
+                'message'   =>  'Your request has been cancelled, because there are still books written by '.$author->name,
+            ]);
+        }
     }
 
     public function data()
